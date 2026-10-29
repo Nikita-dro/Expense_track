@@ -24,6 +24,10 @@ public class User {
     public String getFullName() {return fullName;}
 
     public static boolean checkEmail(){
+        return true;
+    }
+
+    public static boolean checkPass(){
         return false;
     }
 

@@ -94,7 +94,39 @@ public class ConsoleUI {
     }
 
     private void login(){
-        System.out.println("Login");
+        boolean isValid;
+        String reply;
+        String password;
+        do {
+            System.out.print("Enter your email or 'register': ");
+            reply = scanner.nextLine();
+            isValid = User.checkEmail() || reply.equals("register");
+            if (!isValid){
+                System.out.println("We don't have this email in out system.\n" +
+                        "Try again or write 'register' to create new account");
+            } else {
+                if (reply.equals("register")){
+                    registration();
+                    break;
+                }
+                password = checkPassUI();
+                System.out.println(password);
+            }
+        } while(!isValid);
+    }
+
+    private String checkPassUI(){
+        boolean isValid;
+        String password;
+        do{
+            System.out.print("Enter your password: ");
+            password = scanner.nextLine();
+            isValid = User.checkPass();
+            if (!isValid){
+                System.out.println("Wrong password. Try again!");
+            }
+        } while(!isValid);
+        return password;
     }
 
     private void showFunction(){
