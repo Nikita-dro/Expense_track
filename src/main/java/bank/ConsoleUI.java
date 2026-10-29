@@ -1,8 +1,20 @@
 package bank;
 
+import java.io.IOException;
 import java.util.Scanner;
 
 public class ConsoleUI {
+    /*
+    Authorization
+    1. Do you want login or register;
+        1. If "register", should or create new json file or add out user to old json file
+           To add to old file should make map from file and add new item and then write all to out json file.
+               1. Check that in out MAP we don't have that username. If we have, then "login" or "try again";
+        2. If "login" we should ask for the username, create MAP of all users.
+           1. If we don't have user with this username:
+               1. Say that user wrote the wrong username and say "Try one more time"
+               2. Option to create new account with that username.
+     */
     private static final String[] MENU_ITEMS = new String[] {
             "1. Add income",
             "2. Add consumption",
@@ -16,13 +28,73 @@ public class ConsoleUI {
         this.scanner = new Scanner(System.in);
     }
 
-    public void start(){
-        int choice;
+    public void start() throws IOException {
+        authorizationUI();
+//        do{
+//            showFunction();
+//            choice = askFunction();
+//            doAction(choice);
+//        } while(choice != 5);
+    }
+
+    private void authorizationUI(){
+        String choice;
+        boolean isValid;
         do{
-            showFunction();
-            choice = askFunction();
-            doAction(choice);
-        } while(choice != 5);
+            System.out.print("Do you want to register(1) or login(2): ");
+            choice = scanner.nextLine().trim();
+
+            try{
+                int choiceInt = Integer.parseInt(choice);
+                isValid = (choiceInt == 1 || choiceInt == 2);
+                if (isValid){
+                    switch (choiceInt){
+                        case 1 -> {
+                            registration();
+                        }
+                        case 2 -> {
+                            login();
+                        }
+                    }
+                } else {
+                    System.out.println("Wrong input. 1 - register, 2 - login");
+                }
+            } catch (NumberFormatException e){
+                isValid = false;
+                System.out.println("Wrong input. You should write numbers(1 or 2)!");
+            }
+
+        } while(!isValid);
+    }
+
+    private void registration(){
+        boolean isValid;
+        String email;
+        String password;
+        String fullname;
+        do{
+            System.out.print("Enter your own email or ('login'): ");
+            email = scanner.nextLine();
+            isValid = User.checkEmail() || email.equals("login");
+            if (!isValid){
+                System.out.println("We already have this email in our system!\n" +
+                        "If you want enter your account, write 'login'\n" +
+                        "Or try to enter an another email to create new account");
+            } else {
+                if (email.equals("login")){
+                    login();
+                    break;
+                }
+                System.out.print("Enter a password for your account: ");
+                password = scanner.nextLine();
+                System.out.print("Enter your full name: ");
+                fullname = scanner.nextLine();
+            }
+        } while(!isValid);
+    }
+
+    private void login(){
+        System.out.println("Login");
     }
 
     private void showFunction(){
