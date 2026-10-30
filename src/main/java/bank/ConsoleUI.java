@@ -7,8 +7,8 @@ public class ConsoleUI {
     /*
     Authorization
     1. Do you want login or register;
-        1. If "register", should or create new json file or add out user to old json file
-           To add to old file should make map from file and add new item and then write all to out json file.
+        1. If "register", should or create new JSON file or add out user to old JSON file
+           To add to old file should make map from file and add new item and then write all to out JSON file.
                1. Check that in out MAP we don't have that username. If we have, then "login" or "try again";
         2. If "login" we should ask for the username, create MAP of all users.
            1. If we don't have user with this username:
@@ -23,12 +23,14 @@ public class ConsoleUI {
             "5. Save and exit"
     };
     private final Scanner scanner;
+    private final FileStorage storage;
 
-    public ConsoleUI(){
+    public ConsoleUI() throws IOException {
         this.scanner = new Scanner(System.in);
+        this.storage = FileStorage.createFile();
     }
 
-    public void start() throws IOException {
+    public void start() {
         authorizationUI();
 //        do{
 //            showFunction();
@@ -59,7 +61,7 @@ public class ConsoleUI {
                 } else {
                     System.out.println("Wrong input. 1 - register, 2 - login");
                 }
-            } catch (NumberFormatException e){
+            } catch (NumberFormatException | IOException e){
                 isValid = false;
                 System.out.println("Wrong input. You should write numbers(1 or 2)!");
             }
@@ -67,15 +69,15 @@ public class ConsoleUI {
         } while(!isValid);
     }
 
-    private void registration(){
+    private void registration() throws IOException {
         boolean isValid;
         String email;
         String password;
-        String fullname;
+        String fullName;
         do{
             System.out.print("Enter your own email or ('login'): ");
             email = scanner.nextLine();
-            isValid = User.checkEmail() || email.equals("login");
+            isValid = User.checkEmail(storage, email) || email.equals("login");
             if (!isValid){
                 System.out.println("We already have this email in our system!\n" +
                         "If you want enter your account, write 'login'\n" +
@@ -88,19 +90,20 @@ public class ConsoleUI {
                 System.out.print("Enter a password for your account: ");
                 password = scanner.nextLine();
                 System.out.print("Enter your full name: ");
-                fullname = scanner.nextLine();
+                fullName = scanner.nextLine();
+                User.registerUser(storage, email, password, fullName);
             }
         } while(!isValid);
     }
 
-    private void login(){
+    private void login() throws IOException {
         boolean isValid;
         String reply;
         String password;
         do {
             System.out.print("Enter your email or 'register': ");
             reply = scanner.nextLine();
-            isValid = User.checkEmail() || reply.equals("register");
+            isValid = User.checkEmail(storage, reply) || reply.equals("register");
             if (!isValid){
                 System.out.println("We don't have this email in out system.\n" +
                         "Try again or write 'register' to create new account");
